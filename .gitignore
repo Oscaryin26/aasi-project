@@ -1,0 +1,27 @@
+# Rust
+target/
+**/*.rs.bk
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# AASI / Data
+data/
+.qdrant_storage/
+.fastembed_cache/
+results/
+datasets/
+*.key
+*.pem
+*.bin
+*.log
+tmp/
+
+# IDE
+.vscode/
+.idea/
+.DS_Store

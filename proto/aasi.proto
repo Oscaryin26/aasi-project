@@ -1,0 +1,144 @@
+syntax = "proto3";
+package aasi.v1;
+
+// Empty messages for debug RPC
+message DebugRecomputeRankRequest {}
+message DebugRecomputeRankResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+service DiscoveryService {
+  // Registers a new agent or updates an existing one
+  rpc RegisterAgent (RegisterRequest) returns (RegisterResponse);
+  
+  // Searches for agents based on semantic intent
+  rpc SearchAgents (SearchRequest) returns (SearchResponse);
+  
+  // Verifies an agent's inclusion in the Transparency Log
+  rpc VerifyInclusion (VerifyRequest) returns (VerifyResponse);
+
+  // Submits feedback on an interaction to update AgentRank
+  rpc SubmitFeedback (FeedbackRequest) returns (FeedbackResponse);
+
+    // Returns current network difficulty and timestamp
+    rpc GetNetworkParams(ParamsRequest) returns (ParamsResponse);
+
+    // Forces a global rank recomputation (Debug/Dev only)
+    rpc DebugRecomputeRank(DebugRecomputeRankRequest) returns (DebugRecomputeRankResponse);
+}
+
+// --- Data Structures ---
+
+message AgentManifest {
+  string did = 1;
+  uint64 version = 2;
+  uint64 timestamp = 3;
+  // Capability descriptions (will be concatenated for server-side embedding)
+  repeated string capabilities = 4;
+  TrustProof trust_proof = 5;
+  string endpoint = 6;
+  // Server-computed semantic vector. Not signed by Client.
+  repeated float embedding = 7;
+}
+
+message TrustProof {
+  oneof proof {
+    IdentityProof identity = 1;
+    ComputationalProof computational = 2;
+  }
+}
+
+message IdentityProof {
+  // Signature of the manifest using DID's private key
+  bytes domain_signature = 1;
+  repeated Credential verifiable_credentials = 2;
+}
+
+message ComputationalProof {
+  ArgonParams argon2_params = 1;
+  uint64 nonce = 2;
+  bytes hash = 3;
+  uint32 difficulty = 4;
+}
+
+message ArgonParams {
+  uint32 m_cost = 1;
+  uint32 t_cost = 2;
+  uint32 p_cost = 3;
+  // Epoch/Timestamp to anchor work
+  uint64 timestamp = 4;
+}
+
+message Credential {
+  string provider = 1;
+  string id = 2; // Username or Handle
+  string proof = 3; // URL or Sig
+}
+
+// --- Requests & Responses ---
+
+message RegisterRequest {
+  AgentManifest manifest = 1;
+}
+
+message RegisterResponse {
+  string registration_id = 1;
+  string merkle_root_hex = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message SearchRequest {
+  string query_text = 1;
+  float min_trust_score = 2;
+  repeated string required_credentials = 3;
+  uint64 limit = 4;
+}
+
+message SearchResponse {
+  repeated ScoredAgent results = 1;
+}
+
+message ScoredAgent {
+  AgentManifest manifest = 1;
+  float score = 2;
+  float rank_similarity = 3;
+  float rank_trust = 4;
+  float rank_performance = 5;
+}
+
+message VerifyRequest {
+  oneof target {
+    string did = 1;
+    uint64 index = 2;
+  }
+}
+
+message VerifyResponse {
+  bool included = 1;
+  repeated bytes proof_hashes = 2; // Merkle Proof path
+  string merkle_root_hex = 3;
+}
+
+message FeedbackRequest {
+  string reporter_did = 1;
+  string target_did = 2;
+  bool success = 3;
+  uint64 timestamp = 4;
+  uint64 nonce = 5;
+  bytes signature = 6;
+}
+
+message FeedbackResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ParamsRequest {}
+
+message ParamsResponse {
+  uint32 difficulty = 1;
+  uint64 server_timestamp = 2;
+  ArgonParams current_argon_params = 3;
+}

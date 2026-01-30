@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    "crates/aasi-core",
+    "crates/aasi-client",
+    "crates/aasi-proto",
+    "crates/aasi-cli",
+    "experiments/reproduction"
+]
+resolver = "2"

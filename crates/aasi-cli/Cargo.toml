@@ -1,0 +1,25 @@
+[package]
+name = "aasi-cli"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tonic = "0.10"
+rand = "0.8"
+ed25519-dalek = "2.1"
+hex = "0.4"
+aasi-client = { path = "../aasi-client" }
+aasi-proto = { path = "../aasi-proto" }
+clap = { version = "4.4", features = ["derive"] }
+tokio = { version = "1.0", features = ["full"] }
+anyhow = "1.0"
+bs58 = "0.5"
+base64 = "0.22.1"
+
+[[bin]]
+name = "keygen"
+path = "src/bin/keygen.rs"
+
+[[bin]]
+name = "aasi-cli"
+path = "src/main.rs"

@@ -1,0 +1,16 @@
+[package]
+name = "aasi-client"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde_json = "1.0"
+sha2 = "0.10"
+aasi-proto = { path = "../aasi-proto" }
+argon2 = "0.5"
+ed25519-dalek = { version = "2.1", features = ["rand_core"] }
+rand = "0.8"
+serde = { version = "1.0", features = ["derive"] }
+thiserror = "1.0"
+hex = "0.4"
+chrono = "0.4"
