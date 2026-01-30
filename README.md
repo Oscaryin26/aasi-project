@@ -64,9 +64,9 @@ While the core Rust crates are cross-platform, Linux users running the simulatio
 
 ##  Additional Experiments
 
-### Sybil Population Scaling Analysis (Table 2)
+### Sybil Population Scaling Analysis (Table 1)
 
-To reproduce the **Robustness to Population Scaling** experiment (Table 2 in the paper), which validates that visibility expansion alone is insufficient regardless of the attacker population size:
+To reproduce the **Robustness to Population Scaling** experiment (Table 1 in the paper), which validates that visibility expansion alone is insufficient regardless of the attacker population size:
 
 ```bash
 ./scripts/run_sybil_scaling_experiment.sh
